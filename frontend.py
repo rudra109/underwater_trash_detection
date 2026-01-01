@@ -4,12 +4,14 @@ from PIL import Image
 import pandas as pd
 import os
 
-#  PAGE CONFIG 
+# page config
 st.set_page_config(
     page_title="Water Pollution Detection AI",
     page_icon="*",
     layout="centered"
 )
+
+
 
 st.title(" Water Pollution Detection AI")
 st.write(
@@ -17,7 +19,7 @@ st.write(
     "structured environmental records."
 )
 
-#  IMAGE UPLOAD 
+
 uploaded_file = st.file_uploader(
     "Upload Underwater Image",
     type=["jpg", "jpeg", "png"]
@@ -28,14 +30,14 @@ if uploaded_file:
     st.image(image, caption="Uploaded Image", use_column_width=True)
 
 #  LOCATION & DEPTH  (still under construction) manually entering longitutde and latitude and depth 
-st.subheader("📍 Detection Metadata")
+st.subheader("Detection Metadata")
 
 latitude = st.number_input("Latitude", value=15.4912, format="%.6f")
 longitude = st.number_input("Longitude", value=73.8185, format="%.6f")
 depth = st.number_input("Depth (meters)", value=0.0, step=0.1)
 
-#  DETECT BUTTON 
-if st.button("🚀 Detect Pollution"):
+
+if st.button("Detect Pollution"):
 
     if not uploaded_file:
         st.warning("Please upload an image first.")
@@ -49,6 +51,9 @@ if st.button("🚀 Detect Pollution"):
                     uploaded_file.type
                 )
             }
+
+
+            
 
             response = requests.post(
                 "http://127.0.0.1:8000/detect/",
@@ -64,27 +69,30 @@ if st.button("🚀 Detect Pollution"):
                 data = response.json()
                 records = data.get("detections", [])
 
-                st.subheader("📋 Pollution Detection Records")
+                st.subheader("Pollution Detection Records")
 
                 if len(records) == 0:
-                    st.success("No pollution detected 🌊")
+                    st.success("No pollution detected ")
                 else:
                     # table
                     df = pd.DataFrame(records)
                     st.dataframe(df, use_container_width=True)
 
-                    # detail
-                    st.subheader("🧠 Detection Details")
-
+                    #all information regading detcted object
+                    st.subheader(" Detection Details")
                     for r in records:
                         st.markdown("---")
-                        st.write(f"🕒 **Datetime:** {r['datetime']}")
+
+                        
+                        st.write(f" **Datetime:** {r['datetime']}")
                         st.write(
-                            f"📍 **Location:** ({r['lat']}, {r['lon']}) | "
-                            f"🌊 **Depth:** {r['depth']} m"
+                            f" **Location:** ({r['lat']}, {r['lon']}) | "
+                            f" **Depth:** {r['depth']} m"
                         )
-                        st.write(f"🗑️ **Class:** {r['class']}")
-                        st.write(f"📊 **Confidence:** {r['confidence'] * 100:.2f}%")
+
+                        
+                        st.write(f" **Class:** {r['class']}")
+                        st.write(f" **Confidence:** {r['confidence'] * 100:.2f}%")
 
                         # Show cropped detected object
                         if r["image_clip"] and os.path.exists(r["image_clip"]):
@@ -95,4 +103,4 @@ if st.button("🚀 Detect Pollution"):
                             )
 
             else:
-                st.error("❌ Error connecting to detection server")
+                st.error(" Error connecting to detection server")
