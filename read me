@@ -1,0 +1,5 @@
+this is just 40% of our implement ...model acuracy isnt that good due to deadline we train them in low epochs...we will train them again(for increase the efficiency and accuracy) incase if we select further 
+enter cmd to activate frontend and backend
+python -m uvicorn app:app --reload
+python -m streamlit run frontend.py
+
