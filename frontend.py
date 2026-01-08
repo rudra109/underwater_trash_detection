@@ -3,6 +3,8 @@ import requests
 from PIL import Image
 import pandas as pd
 import os
+import folium
+from streamlit_folium import st_folium
 
 # page config
 st.set_page_config(
@@ -30,11 +32,34 @@ if uploaded_file:
     st.image(image, caption="Uploaded Image", use_column_width=True)
 
 #  LOCATION & DEPTH  (still under construction) manually entering longitutde and latitude and depth 
-st.subheader("Detection Metadata")
 
-latitude = st.number_input("Latitude", value=15.4912, format="%.6f")
-longitude = st.number_input("Longitude", value=73.8185, format="%.6f")
-depth = st.number_input("Depth (meters)", value=0.0, step=0.1)
+
+DEFAULT_LAT = 15.4912
+DEFAULT_LON = 73.8185
+st.subheader("Detection Location")
+
+# Create map centered at fixed location
+m = folium.Map(
+    location=[DEFAULT_LAT, DEFAULT_LON],
+    zoom_start=8,
+    control_scale=True
+)
+
+# Add single fixed geo-tag
+folium.Marker(
+    location=[DEFAULT_LAT, DEFAULT_LON],
+    popup="Detection Location",
+    tooltip="Fixed Geo Tag",
+    icon=folium.Icon(color="red", icon="info-sign")
+).add_to(m)
+
+# Render map
+st_folium(m, height=400, width=700)
+
+# Use fixed coordinates
+latitude = DEFAULT_LAT
+longitude = DEFAULT_LON
+
 
 
 if st.button("Detect Pollution"):
@@ -61,7 +86,7 @@ if st.button("Detect Pollution"):
                 data={
                     "latitude": latitude,
                     "longitude": longitude,
-                    "depth": depth
+                    
                 }
             )
 
